@@ -1,3 +1,4 @@
+/// <reference path="../typings/index.d.ts" />
 "use strict";
 var error_accumulator_1 = require("./error-accumulator");
 var validation_context_1 = require("./validation-context");

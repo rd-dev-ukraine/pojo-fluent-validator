@@ -1,3 +1,4 @@
+/// <reference path="../typings/index.d.ts" />
 import { ValidationRule, ValidationResult } from "./definitions";
 import * as rules from "./rules";
 export * from "./definitions";

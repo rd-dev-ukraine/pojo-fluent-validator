@@ -1,3 +1,6 @@
+/// <reference path="../typings/index.d.ts" />
+
+
 import { ValidationRule, ValidationResult } from "./definitions";
 import ErrorAccumulator from "./error-accumulator";
 import ValidationContext from "./validation-context";

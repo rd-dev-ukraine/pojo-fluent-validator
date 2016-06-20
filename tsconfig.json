@@ -5,9 +5,10 @@
         "noImplicitAny": false,
         "sourceMap": true,
         "outDir": "./out",
-        "declaration": true 
+        "declaration": true,
+        "rootDir": "./validator"
     },
-    "include": [
-        "./test/tests.ts"
+    "files": [
+        "./validator/index.ts"
     ]
 }
