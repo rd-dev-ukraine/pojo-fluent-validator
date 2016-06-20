@@ -66,7 +66,9 @@ const productRule = rules.obj({
     // Inside .must(..) check we don't assume retailPrice can be null.
     // That's because required() rule stop rule chain on fail.
     // To control this use { stopOnFailure: false } as rule options.
-    retailPrice: positiveNumberRule.required().must((v, product) => product.retailPrice > product.vendorPrice, { errorMessage: "Product should be profitable" })
+    retailPrice: positiveNumberRule.required()
+        .must((v, product) => product.retailPrice > product.vendorPrice, 
+            { errorMessage: "Product should be profitable" })
 });
 
 
