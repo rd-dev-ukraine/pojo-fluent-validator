@@ -1,8 +1,6 @@
 # pojo-fluent-validator
 
-`pojo-fluent-validator` is javascript library used to check and convert _plain old javascript objects_.
-
-It uses fluent syntax for configuration. 
+`pojo-fluent-validator` is javascript library used to check and convert _plain old javascript objects_ with fluent configuration syntax.
 
 __NOTE__: Validator works with *plain old javascript objects* only. That means no classes, no functions, no prototypes - it works with object literals, primitive types and arrays. 
 Validator doesn't change source object, instead it makes a copy of the object but doesn't call constructor and don't copy prototype. 
