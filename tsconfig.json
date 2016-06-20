@@ -5,10 +5,10 @@
         "noImplicitAny": false,
         "sourceMap": true,
         "outDir": "./out",
-        "declaration": true,
-        "rootDir": "./validator"
+        "declaration": true
     },
     "files": [
-        "./validator/index.ts"
+        "./validator/index.ts",
+        "./test/index.ts"
     ]
 }

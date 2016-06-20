@@ -2,14 +2,14 @@
   "name": "pojo-fluent-validator",
   "version": "1.0.0",
   "description": "Validation and conversion tool for plain old javascript objects.",
-  "main": "./out/index.js",
-  "typings": "./out/index",
+  "main": "./out/validator/index.js",
+  "typings": "./out/validator/index",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rd-dev-ukraine/pojo-fluent-validator.git"
   },
   "scripts": {
-    "test": "mocha ./out/test/index.js"
+    "test": "mocha ./out/test"
   },
   "keywords": [
     "validation",
