@@ -103,5 +103,49 @@ validate({
 Array validation
 
 ``` javascript
+import { validateWithPromise as validate, rules } from "pojo-fluent-validator";
 
+const numArrayRule = rules.arr(
+        rules.num().required().must(v => v > 0));
+
+validate([1, 2, "3"], numArrayRule)
+    .then(arr => {
+        // Array validated. Third element converted from string.
+        console.log(arr); // Outputs [1, 2, 3]
+    });
+
+validate([1, 2, "three"],  numArrayRule)
+    .catch(err => {
+        // For arrays error path is "[2]"
+        console.log(err["[2]"]); // Outpus ["Value is not a valid number"] 
+    }); 
+
+```
+
+Array of objects validation
+
+``` javascript
+import { validateWithPromise as validate, rules } from "pojo-fluent-validator";
+
+const objArrayRule = rules.arr(
+        rules.obj({
+            id: rules.num().required(),
+            title: rules.str().required()
+        }).required() // rule.obj passes null values by default
+          .expandable() // Expandable object allows to have extra non-validatable properties
+    );
+
+const invalidArray = [{
+    id: 1,
+    title: "First"
+}, {
+    id: null,
+    title: "Second"
+}];
+
+validate(invalidArray, objArrayRule)
+    .catch(err => {
+        // Rules pathes are nested in the way of plain javascript access operations
+        console.log(err["[1].id"]); // Outputs ["Value is required"]
+    });
 ```
