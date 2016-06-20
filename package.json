@@ -22,6 +22,7 @@
   "private": true,
   "devDependencies": {
     "mocha": "^2.5.3",
-    "should": "^9.0.2"
+    "should": "^9.0.2",
+    "typescript": "^1.8.10"
   }
 }
