@@ -1,7 +1,3 @@
-declare namespace global {
-    export class Promise<T> { }
-}
-
 declare namespace PojoFluentValidator {
 
     /**
@@ -16,19 +12,6 @@ declare namespace PojoFluentValidator {
         [""]?: string[];
         /** Validation messages for properties and indexes of object, including ones with more than one nesting level. */
         [path: string]: string[];
-    }
-
-    /** 
-     * Result of validation and conversion. 
-     * @convertedValue is not null only if validation is passed.
-     */
-    export interface ValidationResult<T> {
-        /** Gets a value indicates whether validation and conversion was successful. */
-        valid: boolean;
-        /** Gets the converted value. If validation failed the converted value is null. */
-        convertedValue?: T;
-        /** Errors messages for object and it's content. If validation was successful the errors is null. */
-        errors?: ValidationErrorHash;
     }
 
     export interface RuleOptions {
@@ -98,5 +81,117 @@ declare namespace PojoFluentValidator {
             rootObject?: any): void;
     }
 
-    export function validateWithCallback<T>(value: any, done: (result: ValidationResult<T>) => void, ...validators: ValidationRule<T>[]): void;    
+    /**
+     * Runs validation of the given @value. When validation completes, the @done callback will be called.
+     * 
+     * param @value Value to validate.
+     * param @done Callback which will be called when validation completes.
+     */
+    export function validate<T>(
+        value: any,
+        doneCallback: (convertedValue: T, errors: ValidationErrorHash) => void,
+        ...validators: ValidationRule<T>[]): void;
+
+    export namespace rules {
+
+        /**
+         * Base class which can contain a set of rules which runs sequentially, accumulates errors. 
+         * Each next rule validates conversion result of previous rule if successful or last successful value or input. 
+         */
+        export abstract class SequentialRuleSet<T> implements PojoFluentValidator.ValidationRule<T> {
+            stopOnFailure: boolean;
+            runParse(inputValue: any, validatingObject?: any, rootObject?: any): T;
+            runValidate(context: IValidationContext, doneCallback: (success: boolean) => void, parsedValue: any, validatingObject?: any, rootObject?: any): void;
+
+            /** 
+             * Adds a rule which uses custom functions for validation and converting. 
+             * If parsing function is not provided value is passed to validation function without conversion. 
+             */
+            checkAndConvert(
+                validationFn: (doneCallback: (errorMessage?: string) => void, parsedValue: T, validatingObject?: any, rootObject?: any) => void,
+                parseFn?: (inputValue: any, validatingObject?: any, rootObject?: any) => T,
+                putRuleFirst?: boolean,
+                stopOnFailure?: boolean): this;
+
+            /** Fails if input value is null or undefined. */
+            required(options?: RuleOptions): this;
+
+            /** 
+             * Parses input value.
+             * Parse rules runs first.
+             * If transformation function returns null or undefined or throws an error fails with specified error message.
+             */
+            parse(convertFn: (inputValue: any, validatingObject?: any, rootObject?: any) => T, options?: RuleOptions): this;
+
+            /**
+             * Checks the value using custom function. Function must return true if value is valid and false otherwise.
+             */
+            must(predicate: (value: T, validatingObject?: any, rootObject?: any) => boolean, options?: RuleOptions): this;
+        }
+
+        /** 
+         * Encapsulates rule enclosed in set of rules run before and after the rule.
+         * 
+         * Parsing only run for main rule. All other rules uses main rule parsing result as input.
+         * 
+         * The main rule is run only if all rules run before has been run successfuly.
+         * The rules to run after would be only run if main rule run successfuly.
+         * 
+         * Enclosing rule would be run successfuly only if all rules (before, main and after) has run successfuly.  
+         */
+        export abstract class EnclosingValidationRuleBase<T> implements ValidationRule<T> {
+
+            constructor(rule: ValidationRule<T>);
+
+            stopOnFailure: boolean;
+            runParse(inputValue: any, validatingObject?: any, rootObject?: any): T;
+            runValidate(context: IValidationContext, doneCallback: (success: boolean) => void, parsedValue: any, validatingObject?: any, rootObject?: any): void;
+
+            /** Configures whether rules after the current rule should run if current rule failed. */
+            stopOnFail(stopOnFailure: boolean): this;
+
+            /** Disables null object. */
+            required(options?: RuleOptions): this;
+
+            /** Adds a rule which is run before validation. */
+            runBefore(rule: ValidationRule<T>): this;
+
+            /** Adds a rule which is run after validation. */
+            runAfter(rule: ValidationRule<T>): this;
+
+            /** Checks the object before main rule run. */
+            before(predicate: (obj: T, validatingObject?: any, rootObject?: any) => boolean, options?: RuleOptions): this;
+
+            /** Checks the object after main rule run. */
+            after(predicate: (obj: T, validatingObject?: any, rootObject?: any) => boolean, options?: RuleOptions): this;
+        }
+
+        export class AnyRules<T> extends SequentialRuleSet<T> {
+            constructor(stopOnFailure: boolean);
+        }
+
+        /** Validation rules for strings. */
+        export class StringRules extends SequentialRuleSet<string> {
+            /** 
+             * Checks if value has string type. Undefined value is passed as correct. 
+             * This rule is applied automatically, don't add call this method manually.
+             */
+            isString(options?: RuleOptions): this;
+
+            /** Converts value to string. */
+            parseString(options?: RuleOptions): this;
+
+            /** Checks if string is not null or whitespaced. */
+            notEmpty(options?: RuleOptions): this;
+
+            /** Checks string maximum length. */
+            maxLength(maxLength: number, options?: RuleOptions): this;
+            
+            /** Checks string minimum length. */
+            minLength(minLength: number, options?: RuleOptions): this;
+        }
+
+        /** Validates any value using given predicate. */
+        export function any<T>(predicate?: (value: T, entity?: any, rootEntity?: any) => boolean, options?: RuleOptions): AnyRules<T>;
+    }
 }

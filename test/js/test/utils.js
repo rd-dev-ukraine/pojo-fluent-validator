@@ -20,13 +20,14 @@ function validateWithPromise(value) {
         throw new Error("At least one validator is required");
     }
     return new Promise(function (resolve, reject) {
-        src_1.validate.apply(void 0, [value, function (result) {
-            if (result.valid) {
-                resolve(result.convertedValue);
+        src_1.validate.apply(void 0, [value, function (result, errors) {
+            if (errors) {
+                reject(errors);
             }
             else {
-                reject(result.errors);
+                resolve(result);
             }
+            ;
         }].concat(validators));
     });
 }

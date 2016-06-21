@@ -20,13 +20,13 @@ export function validateWithPromise<T>(value: any, ...validators: ValidationRule
     return new Promise((resolve, reject) => {
         validate(
             value,
-            result => {
-                if (result.valid) {
-                    resolve(result.convertedValue);
+            (result, errors) => {
+                if (errors) {
+                    reject(errors);
                 }
                 else {
-                    reject(result.errors);
-                }
+                    resolve(result);
+                };
             },
             ...validators);
     });

@@ -3,12 +3,12 @@ var error_accumulator_1 = require("./error-accumulator");
 var validation_context_1 = require("./validation-context");
 var rules = require("./rules");
 exports.rules = rules;
-function validate(value, done) {
+function validate(value, doneCallback) {
     var validators = [];
     for (var _i = 2; _i < arguments.length; _i++) {
         validators[_i - 2] = arguments[_i];
     }
-    if (!done) {
+    if (!doneCallback) {
         throw new Error("Done callback is required.");
     }
     if (!validators || !validators.length) {
@@ -20,38 +20,11 @@ function validate(value, done) {
     var parsedValue = rule.runParse(value, value, value);
     rule.runValidate(validationContext, function () {
         if (errorAccumulator.valid()) {
-            var validationResult = {
-                valid: true,
-                convertedValue: parsedValue
-            };
-            done(validationResult);
+            doneCallback(parsedValue, null);
         }
         else {
-            var validationResult = {
-                valid: false,
-                convertedValue: null,
-                errors: errorAccumulator.errors()
-            };
-            done(validationResult);
+            doneCallback(null, errorAccumulator.errors());
         }
     }, parsedValue, parsedValue, parsedValue);
 }
 exports.validate = validate;
-// export function validateWithPromise<T>(value: any, ...validators: ValidationRule<T>[]): Promise<T> {
-//     if (!validators || !validators.length) {
-//         throw new Error("At least one validator is required");
-//     }
-//     return new Promise((resolve, reject) => {
-//         validateWithCallback(
-//             value,
-//             result => {
-//                 if (result.valid) {
-//                     resolve(result.convertedValue);
-//                 }
-//                 else {
-//                     reject(result.errors);
-//                 }
-//             },
-//             ...validators);
-//     });
-// } 

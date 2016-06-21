@@ -31,6 +31,7 @@ export class StringRules extends SequentialRuleSet<string> {
             options.stopOnFailure);
     }
 
+    /** Converts value to string. */
     parseString(options?: RuleOptions): this {
         options = ensureRuleOptions(options, {
             errorMessage: "Value must be a string.",
@@ -48,6 +49,7 @@ export class StringRules extends SequentialRuleSet<string> {
             options);
     }
 
+    /** Checks if string is not null or whitespaced. */
     notEmpty(options?: RuleOptions): this {
 
         options = ensureRuleOptions(options, {
@@ -69,6 +71,7 @@ export class StringRules extends SequentialRuleSet<string> {
             options.stopOnFailure);
     }
 
+    /** Checks string maximum length. */
     maxLength(maxLength: number, options?: RuleOptions): this {
         if (maxLength <= 0) {
             throw new Error("Max length must be greater than zero.");
@@ -92,6 +95,7 @@ export class StringRules extends SequentialRuleSet<string> {
             options.stopOnFailure);
     }
 
+    /** Checks string minimum length. */
     minLength(minLength: number, options?: RuleOptions): this {
         if (minLength <= 0) {
             throw new Error("Min length must be greater than zero.");

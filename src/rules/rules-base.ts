@@ -133,7 +133,7 @@ export abstract class SequentialRuleSet<T> implements ValidationRule<T> {
         validationFn: (doneCallback: (errorMessage?: string) => void, parsedValue: T, validatingObject?: any, rootObject?: any) => void,
         parseFn?: (inputValue: any, validatingObject?: any, rootObject?: any) => T,
         putRuleFirst: boolean = false,
-        stopOnFailure = false) {
+        stopOnFailure = false): this {
 
         if (!validationFn) {
             throw new Error("Validation function is required.");
@@ -233,6 +233,9 @@ export abstract class SequentialRuleSet<T> implements ValidationRule<T> {
             options.stopOnFailure);
     }
 
+    /**
+     * Checks the value using custom function. Function must return true if value is valid and false otherwise.
+     */
     must(predicate: (value: T, validatingObject?: any, rootObject?: any) => boolean, options?: RuleOptions): this {
         if (!predicate) {
             throw new Error("Predicate is required.");
@@ -327,6 +330,7 @@ export abstract class EnclosingValidationRuleBase<T> implements ValidationRule<T
 
     }
 
+    /** Configures whether rules after the current rule should run if current rule failed. */
     stopOnFail(stopOnFailure: boolean = true): this {
         const copy = this.clone();
 
@@ -374,7 +378,7 @@ export abstract class EnclosingValidationRuleBase<T> implements ValidationRule<T
         return result;
     }
 
-
+    /** Checks the object before main rule run. */
     before(predicate: (obj: T, validatingObject?: any, rootObject?: any) => boolean, options?: RuleOptions): this {
         if (!predicate) {
             throw new Error("Predicate is required.");
@@ -383,6 +387,7 @@ export abstract class EnclosingValidationRuleBase<T> implements ValidationRule<T
         return this.runBefore(any<T>(predicate, options));
     }
 
+    /** Checks the object after main rule run. */
     after(predicate: (obj: T, validatingObject?: any, rootObject?: any) => boolean, options?: RuleOptions): this {
         if (!predicate) {
             throw new Error("Predicate is required.");
@@ -412,24 +417,6 @@ export abstract class EnclosingValidationRuleBase<T> implements ValidationRule<T
         result.stopOnFailure = this.stopOnFailure;
 
         return result;
-    }
-}
-
-export class EmptyRule<T> implements ValidationRule<T> {
-
-    stopOnFailure = false;
-
-    runParse(inputValue: any, validatingObject?: any, rootObject?: any): T {
-        return <T>inputValue;
-    }
-
-    /** Runs all chained rules. */
-    runValidate(context: IValidationContext,
-        doneCallback: (success: boolean) => void,
-        parsedValue: any,
-        validatingObject?: any,
-        rootObject?: any): void {
-        doneCallback(true);
     }
 }
 

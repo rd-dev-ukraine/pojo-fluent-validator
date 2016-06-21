@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "description": "Validation and conversion tool for plain old javascript objects.",
   "main": "./js/index.js",
-  "typings": "./out/validator/index",
+  "typings": "./index",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rd-dev-ukraine/pojo-fluent-validator.git"

@@ -12,19 +12,6 @@ export interface ValidationErrorHash {
     [path: string]: string[];
 }
 
-/** 
- * Result of validation and conversion. 
- * @convertedValue is not null only if validation is passed.
- */
-export interface ValidationResult<T> {
-    /** Gets a value indicates whether validation and conversion was successful. */
-    valid: boolean;
-    /** Gets the converted value. If validation failed the converted value is null. */
-    convertedValue?: T;
-    /** Errors messages for object and it's content. If validation was successful the errors is null. */
-    errors?: ValidationErrorHash;
-}
-
 export interface RuleOptions {
     errorMessage?: string;
     stopOnFailure?: boolean; 

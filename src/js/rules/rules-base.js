@@ -171,6 +171,9 @@ var SequentialRuleSet = (function () {
             }
         }, false, options.stopOnFailure);
     };
+    /**
+     * Checks the value using custom function. Function must return true if value is valid and false otherwise.
+     */
     SequentialRuleSet.prototype.must = function (predicate, options) {
         if (!predicate) {
             throw new Error("Predicate is required.");
@@ -235,6 +238,7 @@ var EnclosingValidationRuleBase = (function () {
         ], (this.rulesAfter || []));
         combineRules.apply(void 0, all).runValidate(context, doneCallback, obj, validatingObject, rootObject);
     };
+    /** Configures whether rules after the current rule should run if current rule failed. */
     EnclosingValidationRuleBase.prototype.stopOnFail = function (stopOnFailure) {
         if (stopOnFailure === void 0) { stopOnFailure = true; }
         var copy = this.clone();
@@ -269,12 +273,14 @@ var EnclosingValidationRuleBase = (function () {
         result.rulesAfter = this.rulesAfter.concat([rule]);
         return result;
     };
+    /** Checks the object before main rule run. */
     EnclosingValidationRuleBase.prototype.before = function (predicate, options) {
         if (!predicate) {
             throw new Error("Predicate is required.");
         }
         return this.runBefore(any(predicate, options));
     };
+    /** Checks the object after main rule run. */
     EnclosingValidationRuleBase.prototype.after = function (predicate, options) {
         if (!predicate) {
             throw new Error("Predicate is required.");
@@ -299,20 +305,6 @@ var EnclosingValidationRuleBase = (function () {
     return EnclosingValidationRuleBase;
 }());
 exports.EnclosingValidationRuleBase = EnclosingValidationRuleBase;
-var EmptyRule = (function () {
-    function EmptyRule() {
-        this.stopOnFailure = false;
-    }
-    EmptyRule.prototype.runParse = function (inputValue, validatingObject, rootObject) {
-        return inputValue;
-    };
-    /** Runs all chained rules. */
-    EmptyRule.prototype.runValidate = function (context, doneCallback, parsedValue, validatingObject, rootObject) {
-        doneCallback(true);
-    };
-    return EmptyRule;
-}());
-exports.EmptyRule = EmptyRule;
 var AnyRules = (function (_super) {
     __extends(AnyRules, _super);
     function AnyRules(stopOnFailure) {
