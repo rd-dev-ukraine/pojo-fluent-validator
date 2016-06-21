@@ -186,12 +186,101 @@ declare namespace PojoFluentValidator {
 
             /** Checks string maximum length. */
             maxLength(maxLength: number, options?: RuleOptions): this;
-            
+
             /** Checks string minimum length. */
             minLength(minLength: number, options?: RuleOptions): this;
         }
 
+        /** Validation rules for numbers. */
+        export class NumberRules extends SequentialRuleSet<number> {
+            /** 
+             * Checks if value is number. Null or undefined values are passed as correct. 
+             * This rule is applied automatically, don't call it. 
+             */
+            isNumber(options?: RuleOptions): this;
+
+            /**
+             * Parses number.
+             */
+            parseNumber(options?: RuleOptions): this;
+        }
+
+        /** Configuration object for ObjectValidationRule. */
+        export interface IPropertyValidationHash {
+            [property: string]: ValidationRule<any>;
+        }
+
+        /** Object with properties. */
+        export interface IObject {
+            [property: string]: any;
+        }
+
+        /** Validation rules for object. */
+        export class ObjectValidationRule<T extends IObject> extends EnclosingValidationRuleBase<T> {
+            constructor(properties: IPropertyValidationHash, isExpandable: boolean, stopsOnMainRuleFailure: boolean);
+
+            /** Configures that object may contains more properties than specified in configuration. */
+            expandable(): this;
+        }
+
+        /** Map of elements with the same structure. */
+        export interface IHash<TElement> {
+            [key: string]: TElement;
+        }
+
+        export class HashValidationRule<TElement> extends EnclosingValidationRuleBase<IHash<TElement>> {
+            constructor(
+                elementValidationRule: ValidationRule<TElement>,
+                skipInvalidElementsProp: boolean,
+                filterHashFn: (key: string, value?: TElement) => boolean,
+                stopOnMainRuleFailure: boolean);
+
+            /**
+             * Don't fail on invalid element. Instead don't include invalid elements in result hash.
+             * Note new rule never fails instead return empty hash.
+             */
+            skipInvalidElements(skipInvalidElements?: boolean): this;
+
+            /** Filter result hash by applying predicate to each hash item and include only items passed the test. */
+            filter(predicate: (key: string, value?: TElement) => boolean): this;
+        }
+
+        /** Validation rules for array. */
+        export class ArrayValidationRule<TElement> extends EnclosingValidationRuleBase<TElement[]> {
+            constructor(
+                elementValidationRule: ValidationRule<TElement>,
+                skipInvalidElementsProp: boolean,
+                filterElementFn: (element: TElement, index?: number) => boolean,
+                stopOnMainRuleFailure);
+
+            /**
+             * Don't fail on invalid element. Instead don't include invalid elements in result array.
+             * Note new rule never fails instead it returns empty array.
+             */
+            skipInvalidElements(skipInvalidElements?: boolean): this;
+
+            /** Filter result array by applying predicate to each hash item and include only items passed the test. */
+            filter(predicate: (element: TElement, index?: number) => boolean): this;
+        }
+
         /** Validates any value using given predicate. */
         export function any<T>(predicate?: (value: T, entity?: any, rootEntity?: any) => boolean, options?: RuleOptions): AnyRules<T>;
+
+        /** Validates if value is string. */
+        export function str(convert?: boolean, options?: RuleOptions): StringRules;
+
+        /** Validates if value is number. */
+        export function num(convert?: boolean, options?: RuleOptions): NumberRules;
+
+        /** Validates object. */
+        export function obj<T>(properties: IPropertyValidationHash, stopOnFailure?: boolean): ObjectValidationRule<T>;
+
+        /**
+         * Validates a map of objects with the same structure.
+         */
+        export function hash<TElement>(elementValidationRule: ValidationRule<TElement>, stopOnFailure?: boolean): HashValidationRule<TElement>;
+
+        /** Validates an array of the elements with the same structure. */
+        export function arr<TElement>(elementValidationRule: ValidationRule<TElement>, stopOnFailure?: boolean): ArrayValidationRule<TElement>;
     }
 }
