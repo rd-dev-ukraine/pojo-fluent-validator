@@ -23,7 +23,38 @@ npm install pojo-fluent-validator
 
 ## **NOTE**: `validate` function which returns a promise is not included in package, it looks like:
 
+#### Javascript
+
 ``` javascript
+
+import { validate } from "pojo-fluent-validator";
+
+export function validate(value: any, ...validators) {
+    if (!validators || !validators.length) {
+        throw new Error("At least one validator is required");
+    }
+
+    return new Promise((resolve, reject) => {
+        validate(
+            value,
+            (result, errors) => {
+                if (errors) {
+                    reject(errors);
+                }
+                else {
+                    resolve(result);
+                };
+            },
+            ...validators);
+    });
+}
+``` 
+
+
+#### Typescript
+``` javascript
+import { validate, ValidationRule } from "pojo-fluent-validator";
+
 export function validate<T>(value: any, ...validators: ValidationRule<T>[]): Promise<T> {
     if (!validators || !validators.length) {
         throw new Error("At least one validator is required");
