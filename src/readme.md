@@ -21,10 +21,35 @@ Validator doesn't change source object, instead it makes a copy of the object bu
 npm install pojo-fluent-validator
 ```
 
+## **NOTE**: `validate` function which returns a promise is not included in package, it looks like:
+
+``` javascript
+export function validate<T>(value: any, ...validators: ValidationRule<T>[]): Promise<T> {
+    if (!validators || !validators.length) {
+        throw new Error("At least one validator is required");
+    }
+
+    return new Promise((resolve, reject) => {
+        validate(
+            value,
+            (result, errors) => {
+                if (errors) {
+                    reject(errors);
+                }
+                else {
+                    resolve(result);
+                };
+            },
+            ...validators);
+    });
+}
+``` 
+
+
 Single value validation example.
 
 ``` javascript
-import { validateWithPromise as validate, rules } from "pojo-fluent-validator";
+import { rules } from "pojo-fluent-validator";
 
 
 const rule = rules.num().must(v => v > 0, { errorMessage: "Must be greater than zero!" });
@@ -49,7 +74,7 @@ Object validation example. Shows validator composability.
 
 
 ``` javascript
-import { validateWithPromise as validate, rules } from "pojo-fluent-validator";
+import { rules } from "pojo-fluent-validator";
 
 
 const positiveNumberRule = rules.num().must(v => v > 0);
@@ -105,7 +130,7 @@ validate({
 Array validation
 
 ``` javascript
-import { validateWithPromise as validate, rules } from "pojo-fluent-validator";
+import { rules } from "pojo-fluent-validator";
 
 const numArrayRule = rules.arr(
         rules.num().required().must(v => v > 0));
@@ -127,7 +152,7 @@ validate([1, 2, "three"],  numArrayRule)
 Array of objects validation
 
 ``` javascript
-import { validateWithPromise as validate, rules } from "pojo-fluent-validator";
+import { rules } from "pojo-fluent-validator";
 
 const objArrayRule = rules.arr(
         rules.obj({
