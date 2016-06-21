@@ -31,6 +31,7 @@ var StringRules = (function (_super) {
             }
         }, null, true, options.stopOnFailure);
     };
+    /** Converts value to string. */
     StringRules.prototype.parseString = function (options) {
         options = rules_base_1.ensureRuleOptions(options, {
             errorMessage: "Value must be a string.",
@@ -43,6 +44,7 @@ var StringRules = (function (_super) {
             return "" + v;
         }, options);
     };
+    /** Checks if string is not null or whitespaced. */
     StringRules.prototype.notEmpty = function (options) {
         options = rules_base_1.ensureRuleOptions(options, {
             errorMessage: "Value can not be empty.",
@@ -57,6 +59,7 @@ var StringRules = (function (_super) {
             }
         }, null, false, options.stopOnFailure);
     };
+    /** Checks string maximum length. */
     StringRules.prototype.maxLength = function (maxLength, options) {
         if (maxLength <= 0) {
             throw new Error("Max length must be greater than zero.");
@@ -74,6 +77,7 @@ var StringRules = (function (_super) {
             }
         }, null, false, options.stopOnFailure);
     };
+    /** Checks string minimum length. */
     StringRules.prototype.minLength = function (minLength, options) {
         if (minLength <= 0) {
             throw new Error("Min length must be greater than zero.");
