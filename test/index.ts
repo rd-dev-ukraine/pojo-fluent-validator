@@ -1,4 +1,4 @@
-import * as assert from "assert";
+/// <reference path="./typings/index.d.ts" />
 
 import primitiveTypesValidatorTest from "./primitive-types-validator-test";
 import objectValidatorTest from "./object-validator-test";

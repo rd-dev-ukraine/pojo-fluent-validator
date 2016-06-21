@@ -1,7 +1,8 @@
 import * as should from "should";
 
 import {assertBlock } from "./utils";
-import { validateWithPromise as validate, rules } from "../validator";
+import { rules } from "../src";
+import { validateWithPromise as validate } from "./utils";
 
 export default () => {
     describe("for object with flat structure", () => {

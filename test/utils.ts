@@ -1,3 +1,7 @@
+/// <reference path="./typings/index.d.ts" />
+
+import { validate, ValidationRule  } from "../src";
+
 export function assertBlock(done: MochaDone, assertionBlock: () => void) {
     try {
         assertionBlock();
@@ -6,4 +10,24 @@ export function assertBlock(done: MochaDone, assertionBlock: () => void) {
     catch (e) {
         done(e);
     }
+}
+
+export function validateWithPromise<T>(value: any, ...validators: ValidationRule<T>[]): Promise<T> {
+    if (!validators || !validators.length) {
+        throw new Error("At least one validator is required");
+    }
+
+    return new Promise((resolve, reject) => {
+        validate(
+            value,
+            result => {
+                if (result.valid) {
+                    resolve(result.convertedValue);
+                }
+                else {
+                    reject(result.errors);
+                }
+            },
+            ...validators);
+    });
 }
