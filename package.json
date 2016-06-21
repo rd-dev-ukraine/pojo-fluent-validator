@@ -19,7 +19,7 @@
   ],
   "author": "Sergey Tokarev",
   "license": "MIT",
-  "private": true,
+  "private": false,
   "devDependencies": {
     "mocha": "^2.5.3",
     "should": "^9.0.2",
