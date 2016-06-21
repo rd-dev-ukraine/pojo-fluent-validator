@@ -251,7 +251,7 @@ declare namespace PojoFluentValidator {
                 elementValidationRule: ValidationRule<TElement>,
                 skipInvalidElementsProp: boolean,
                 filterElementFn: (element: TElement, index?: number) => boolean,
-                stopOnMainRuleFailure);
+                stopOnMainRuleFailure: boolean);
 
             /**
              * Don't fail on invalid element. Instead don't include invalid elements in result array.

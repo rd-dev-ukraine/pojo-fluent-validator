@@ -27,7 +27,7 @@ npm install pojo-fluent-validator
 
 ``` javascript
 
-import { validate } from "pojo-fluent-validator";
+import { validate as validateWithCallback } from "pojo-fluent-validator";
 
 export function validate(value: any, ...validators) {
     if (!validators || !validators.length) {
@@ -35,7 +35,7 @@ export function validate(value: any, ...validators) {
     }
 
     return new Promise((resolve, reject) => {
-        validate(
+        validateWithCallback(
             value,
             (result, errors) => {
                 if (errors) {
@@ -53,7 +53,7 @@ export function validate(value: any, ...validators) {
 
 #### Typescript
 ``` javascript
-import { validate, ValidationRule } from "pojo-fluent-validator";
+import { validate as validateWithCallback, ValidationRule } from "pojo-fluent-validator";
 
 export function validate<T>(value: any, ...validators: ValidationRule<T>[]): Promise<T> {
     if (!validators || !validators.length) {
@@ -61,7 +61,7 @@ export function validate<T>(value: any, ...validators: ValidationRule<T>[]): Pro
     }
 
     return new Promise((resolve, reject) => {
-        validate(
+        validateWithCallback(
             value,
             (result, errors) => {
                 if (errors) {

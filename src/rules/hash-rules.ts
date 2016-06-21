@@ -11,7 +11,7 @@ class HashValidationRuleCore<TElement> implements ValidationRule<IHash<TElement>
         private elementValidationRule: ValidationRule<TElement>,
         private skipInvalidElements: boolean,
         private filterHashFn: (key: string, value?: TElement, rawValue?: any) => boolean,
-        public stopOnFailure) {
+        public stopOnFailure: boolean) {
 
         if (!elementValidationRule) {
             throw new Error("Element validation rule required");
@@ -90,7 +90,7 @@ export class HashValidationRule<TElement> extends EnclosingValidationRuleBase<IH
         private elementValidationRule: ValidationRule<TElement>,
         private skipInvalidElementsProp: boolean,
         private filterHashFn: (key: string, value?: TElement) => boolean,
-        private stopOnMainRuleFailure) {
+        private stopOnMainRuleFailure: boolean) {
 
         super(new HashValidationRuleCore<TElement>(elementValidationRule, skipInvalidElementsProp, filterHashFn, stopOnMainRuleFailure));
     }

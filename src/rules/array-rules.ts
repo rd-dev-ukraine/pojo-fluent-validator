@@ -96,7 +96,7 @@ export class ArrayValidationRule<TElement> extends EnclosingValidationRuleBase<T
         private elementValidationRule: ValidationRule<TElement>,
         private skipInvalidElementsProp: boolean,
         private filterElementFn: (element: TElement, index?: number) => boolean,
-        private stopOnMainRuleFailure) {
+        private stopOnMainRuleFailure: boolean) {
 
         super(new ArrayValidationRuleCore<TElement>(
             elementValidationRule,
