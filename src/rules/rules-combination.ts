@@ -102,26 +102,20 @@ export function all<T>(rules: ValidationRule<T>[], stopOnError: boolean = false)
             let value = parsedValue;
             let allRulesOk = true;
 
-            console.log("all run validate")
-
             const run = () => {
                 const rule = rulesToRun.shift();
 
                 if (rule) { 
-
-                    console.log("run rule");
 
                     const ruleParsedValue = rule.runParse(value, validatingObject, rootObject);
 
                     rule.runValidate(
                         context,
                         (success, convertedValue) => {
-                            console.log("run rule result " + success);
                             if (success) {
                                 value = convertedValue;
                             }
                             else {
-                                console.log("rule failed, stop on error = ", rule.stopOnFailure);
                                 if (rule.stopOnFailure) {
                                     doneCallback(false, null);
                                     return;
