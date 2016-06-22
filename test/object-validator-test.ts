@@ -8,7 +8,7 @@ describe("for object with flat structure", () => {
     const objectStructure = rules.obj({
         id: rules.str().required().notEmpty({ errorMessage: "Empty!!" }),
         title: rules.str().notEmpty().must(v => v.length > 3, { errorMessage: "Too short" }),
-        description: rules.str(),
+        description: rules.str(false),
         price: rules.num().required().must(p => p > 0, { errorMessage: "Positive!!!" })
     });
 
@@ -46,7 +46,7 @@ describe("for object with flat structure", () => {
                     id: "2342340",
                     title: "test",
                     price: 23,
-                    description: ""
+                    description: undefined                    
                 });
             }))
             .catch(() => done("Must fail"));
@@ -63,7 +63,7 @@ describe("for object with flat structure", () => {
         validate(test, objectStructure)
             .then(v => assertBlock(done, () => {
                 v.should.deepEqual({
-                    description: "",
+                    description: undefined,
                     id: "2342340",
                     title: "test",
                     price: 23

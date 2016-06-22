@@ -7,7 +7,7 @@ describe("for object with flat structure", function () {
     var objectStructure = src_1.rules.obj({
         id: src_1.rules.str().required().notEmpty({ errorMessage: "Empty!!" }),
         title: src_1.rules.str().notEmpty().must(function (v) { return v.length > 3; }, { errorMessage: "Too short" }),
-        description: src_1.rules.str(),
+        description: src_1.rules.str(false),
         price: src_1.rules.num().required().must(function (p) { return p > 0; }, { errorMessage: "Positive!!!" })
     });
     it("must not fail on null value if required is not specified", function (done) {
@@ -39,7 +39,7 @@ describe("for object with flat structure", function () {
                 id: "2342340",
                 title: "test",
                 price: 23,
-                description: ""
+                description: undefined
             });
         }); })
             .catch(function () { return done("Must fail"); });
@@ -54,7 +54,7 @@ describe("for object with flat structure", function () {
         utils_2.validateWithPromise(test, objectStructure)
             .then(function (v) { return utils_1.assertBlock(done, function () {
             v.should.deepEqual({
-                description: "",
+                description: undefined,
                 id: "2342340",
                 title: "test",
                 price: 23
