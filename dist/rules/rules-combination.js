@@ -70,19 +70,15 @@ function all(rules, stopOnError) {
             var rulesToRun = rules.slice();
             var value = parsedValue;
             var allRulesOk = true;
-            console.log("all run validate");
             var run = function () {
                 var rule = rulesToRun.shift();
                 if (rule) {
-                    console.log("run rule");
                     var ruleParsedValue = rule.runParse(value, validatingObject, rootObject);
                     rule.runValidate(context, function (success, convertedValue) {
-                        console.log("run rule result " + success);
                         if (success) {
                             value = convertedValue;
                         }
                         else {
-                            console.log("rule failed, stop on error = ", rule.stopOnFailure);
                             if (rule.stopOnFailure) {
                                 doneCallback(false, null);
                                 return;
