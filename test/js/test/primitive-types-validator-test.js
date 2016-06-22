@@ -161,4 +161,34 @@ describe("for any value", function () {
         }); })
             .catch(function () { return done("Must pass!!"); });
     });
+    it("must validate correct if first parameter of any is not specified", function (done) {
+        var rule = src_1.rules.any().parseAndValidate(function (v) { return !v ? v : new Date(v); }, function (done, parsed) {
+            if (isNaN(parsed)) {
+                done("Value is not a valid date");
+            }
+            else {
+                done();
+            }
+        });
+        utils_1.shouldPass(utils_2.validateWithPromise("2011-01-01", rule), done, function (r) {
+            r.getTime().should.equal(new Date("2011-01-01").getTime());
+        });
+    });
+    it("must validate correct if first parameter of any is not specified for invalid value", function (done) {
+        var rule = src_1.rules.any().parseAndValidate(function (v) { return !v ? v : new Date(v); }, function (done, parsed) {
+            if (isNaN(parsed)) {
+                done("Value is not a valid date");
+            }
+            else {
+                done();
+            }
+        });
+        utils_1.shouldFail(utils_2.validateWithPromise("sdfsdf01", rule), done, function (err) {
+            err.should.deepEqual((_a = {},
+                _a[""] = ["Value is not a valid date"],
+                _a
+            ));
+            var _a;
+        });
+    });
 });

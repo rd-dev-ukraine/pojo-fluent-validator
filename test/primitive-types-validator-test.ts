@@ -1,6 +1,6 @@
 import * as should from "should";
 
-import { assertBlock } from "./utils";
+import { assertBlock, shouldFail, shouldPass } from "./utils";
 import { rules } from "../src";
 import { validateWithPromise as validate } from "./utils";
 
@@ -185,5 +185,45 @@ describe("for any value", () => {
                 v.getTime().should.equal(new Date("2014-11-01").getTime());
             }))
             .catch(() => done("Must pass!!"));
+    });
+
+    it("must validate correct if first parameter of any is not specified", done => {
+
+        const rule = rules.any<Date>().parseAndValidate(v => !v ? v : new Date(v),
+            (done, parsed) => {
+                if (isNaN(<any>parsed)) {
+                    done("Value is not a valid date");
+                }
+                else {
+                    done();
+                }
+            }
+        );
+
+        shouldPass(validate("2011-01-01", rule), done, r => {
+            r.getTime().should.equal(new Date("2011-01-01").getTime())
+        });
+
+    });
+
+    it("must validate correct if first parameter of any is not specified for invalid value", done => {
+
+        const rule = rules.any<Date>().parseAndValidate(v => !v ? v : new Date(v),
+            (done, parsed) => {
+                if (isNaN(<any>parsed)) {
+                    done("Value is not a valid date");
+                }
+                else {
+                    done();
+                }
+            }
+        );
+
+        shouldFail(validate("sdfsdf01", rule), done, err => {
+            err.should.deepEqual({
+                [""]: ["Value is not a valid date"]
+            })
+        });
+
     });
 });

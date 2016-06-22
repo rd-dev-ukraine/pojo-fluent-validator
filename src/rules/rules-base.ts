@@ -445,6 +445,7 @@ export class AnyRules<T> extends SequentialRuleSet<T> {
 /** Validates any value using given predicate. */
 export function any<T>(predicate?: (value: T, entity?: any, rootEntity?: any) => boolean, options?: RuleOptions): AnyRules<T> {
     options = ensureRuleOptions(options, {
+        errorMessage: "Value is not valid",
         stopOnFailure: false
     });
 

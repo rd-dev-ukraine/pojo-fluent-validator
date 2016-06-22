@@ -1,6 +1,6 @@
 {
   "name": "pojo-fluent-validator",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Validation and conversion tool for plain old javascript objects.",
   "main": "index.js",
   "typings": "index.d.ts",

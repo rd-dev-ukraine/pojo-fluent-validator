@@ -330,6 +330,7 @@ exports.AnyRules = AnyRules;
 /** Validates any value using given predicate. */
 function any(predicate, options) {
     options = ensureRuleOptions(options, {
+        errorMessage: "Value is not valid",
         stopOnFailure: false
     });
     predicate = predicate || (function (v) { return true; });
