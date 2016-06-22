@@ -73,7 +73,7 @@ export interface ValidationRule<T> {
      * param @rootObject Object on which validation was run.
      */
     runValidate(context: IValidationContext,
-        doneCallback: (success: boolean) => void,
+        doneCallback: (success: boolean, convertedValue: any) => void,
         parsedValue: any,
         validatingObject?: any,
         rootObject?: any): void;

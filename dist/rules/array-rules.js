@@ -26,7 +26,7 @@ var ArrayValidationRuleCore = (function () {
     ArrayValidationRuleCore.prototype.runValidate = function (context, doneCallback, array, validatingObject, rootObject) {
         var _this = this;
         if (array === null || array === undefined) {
-            doneCallback(true);
+            doneCallback(true, null);
             return;
         }
         var srcIndex = 0;
@@ -63,7 +63,7 @@ var ArrayValidationRuleCore = (function () {
                 }
             }
             else {
-                doneCallback(valid);
+                doneCallback(valid, array);
             }
         };
         run();

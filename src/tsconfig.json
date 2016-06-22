@@ -7,9 +7,7 @@
         "noFallthroughCasesInSwitch": true,
         "noImplicitReturns": true,
         "sourceMap": false,
-        "outDir": "../dist"
-    },
-    "files": [
-        "./index.ts"
-    ]
+        "outDir": "../dist",
+        "pretty": true
+    }
 }

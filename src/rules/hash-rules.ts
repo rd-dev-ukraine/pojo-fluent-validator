@@ -38,7 +38,7 @@ class HashValidationRuleCore<TElement> implements ValidationRule<IHash<TElement>
 
     runValidate(
         context: IValidationContext,
-        doneCallback: (success: boolean) => void,
+        doneCallback: (success: boolean, convertedValue: any) => void,
         hash: any,
         validatingObject?: any,
         rootObject?: any): void {
@@ -76,7 +76,7 @@ class HashValidationRuleCore<TElement> implements ValidationRule<IHash<TElement>
                     rootObject);
             }
             else {
-                doneCallback(valid);
+                doneCallback(valid, hash);
             }
         };
 

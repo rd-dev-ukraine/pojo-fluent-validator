@@ -36,7 +36,7 @@ var ObjectValidationRuleCore = (function () {
     };
     ObjectValidationRuleCore.prototype.runValidate = function (context, doneCallback, obj, validatingObject, rootObject) {
         if (obj === null || obj === undefined) {
-            doneCallback(true);
+            doneCallback(true, null);
             return;
         }
         var propertyRules = [];
@@ -59,7 +59,7 @@ var ObjectValidationRuleCore = (function () {
                 }, propertyValue, obj, rootObject);
             }
             else {
-                doneCallback(allValid);
+                doneCallback(allValid, obj);
             }
         };
         run();

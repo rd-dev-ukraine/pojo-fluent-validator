@@ -25,13 +25,13 @@ export class ArrayValidationRuleCore<TElement> implements ValidationRule<TElemen
 
     runValidate(
         context: IValidationContext,
-        doneCallback: (success: boolean) => void,
+        doneCallback: (success: boolean, convertedValue: any) => void,
         array: any[],
         validatingObject?: any,
         rootObject?: any): void {
 
         if (array === null || array === undefined) {
-            doneCallback(true);
+            doneCallback(true, null);
             return;
         }
 
@@ -82,7 +82,7 @@ export class ArrayValidationRuleCore<TElement> implements ValidationRule<TElemen
                 }
             }
             else {
-                doneCallback(valid);
+                doneCallback(valid, array);
             }
         }
 

@@ -55,7 +55,7 @@ var HashValidationRuleCore = (function () {
                 }, inputValue, hash, rootObject);
             }
             else {
-                doneCallback(valid);
+                doneCallback(valid, hash);
             }
         };
         run();

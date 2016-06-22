@@ -4,9 +4,7 @@
         "target": "es5",
         "noImplicitAny": false,
         "sourceMap": false,
-        "outDir": "./js"
-    },
-    "files": [
-        "./index.ts"
-    ]
+        "outDir": "./js",
+        "pretty": true
+    }
 }

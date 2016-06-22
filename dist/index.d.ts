@@ -73,7 +73,7 @@ export declare interface ValidationRule<T> {
      * param @rootObject Object on which validation was run.
      */
     runValidate(context: IValidationContext,
-        doneCallback: (success: boolean) => void,
+        doneCallback: (success: boolean, convertedValue: any) => void,
         parsedValue: any,
         validatingObject?: any,
         rootObject?: any): void;
@@ -90,7 +90,7 @@ export declare function validate<T>(
     doneCallback: (errors: ValidationErrorHash, convertedValue: T) => void,
     ...validators: ValidationRule<T>[]): void;
 
- export declare namespace rules {
+export declare namespace rules {
 
     /**
      * Base class which can contain a set of rules which runs sequentially, accumulates errors. 
@@ -99,16 +99,21 @@ export declare function validate<T>(
     export abstract class SequentialRuleSet<T> implements ValidationRule<T> {
         stopOnFailure: boolean;
         runParse(inputValue: any, validatingObject?: any, rootObject?: any): T;
-        runValidate(context: IValidationContext, doneCallback: (success: boolean) => void, parsedValue: any, validatingObject?: any, rootObject?: any): void;
+        runValidate(context: IValidationContext,
+            doneCallback: (success: boolean, convertedValue: any) => void,
+            parsedValue: any,
+            validatingObject?: any,
+            rootObject?: any): void;
 
         /** 
-         * Adds a rule which uses custom functions for validation and converting. 
-         * If parsing function is not provided value is passed to validation function without conversion. 
+         * Adds a rule which uses custom functions for validation and converting.
+         * If parsing function is not provided value is passed to validation function without conversion.
+         * Note: if validation function should also perform value conversion 
+         * you would probably need to manually create class implements ValidationRule 
          */
-        checkAndConvert(
-            validationFn: (doneCallback: (errorMessage?: string) => void, parsedValue: T, validatingObject?: any, rootObject?: any) => void,
-            parseFn?: (inputValue: any, validatingObject?: any, rootObject?: any) => T,
-            putRuleFirst?: boolean,
+        parseAndValidate(
+            parseFn: (inputValue: any, validatingObject?: any, rootObject?: any) => T,
+            validationFn: (doneCallback: (errorMessage?: string) => void, parsedValue: T, validatingObject?: any, rootObject?: any) => void,            
             stopOnFailure?: boolean): this;
 
         /** Fails if input value is null or undefined. */
@@ -143,7 +148,11 @@ export declare function validate<T>(
 
         stopOnFailure: boolean;
         runParse(inputValue: any, validatingObject?: any, rootObject?: any): T;
-        runValidate(context: IValidationContext, doneCallback: (success: boolean) => void, parsedValue: any, validatingObject?: any, rootObject?: any): void;
+        runValidate(context: IValidationContext, 
+            doneCallback: (success: boolean, convertedValue: any) => void, 
+            parsedValue: any, 
+            validatingObject?: any, 
+            rootObject?: any): void;
 
         /** Configures whether rules after the current rule should run if current rule failed. */
         stopOnFail(stopOnFailure: boolean): this;

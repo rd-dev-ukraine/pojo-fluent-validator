@@ -18,9 +18,9 @@ function validate(value, doneCallback) {
     var validationContext = new validation_context_1.default("", errorAccumulator);
     var rule = rules.combineRules.apply(rules, validators);
     var parsedValue = rule.runParse(value, value, value);
-    rule.runValidate(validationContext, function () {
+    rule.runValidate(validationContext, function (success, convertedValue) {
         if (errorAccumulator.valid()) {
-            doneCallback(null, parsedValue);
+            doneCallback(null, convertedValue);
         }
         else {
             doneCallback(errorAccumulator.errors(), null);

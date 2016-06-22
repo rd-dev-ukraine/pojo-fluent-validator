@@ -17,7 +17,8 @@ export class StringRules extends SequentialRuleSet<string> {
             stopOnFailure: true
         });
 
-        return this.checkAndConvert(
+        return this.parseAndValidate(
+            null,
             (done, value) => {
                 if (value && typeof value !== "string") {
                     done(options.errorMessage);
@@ -26,8 +27,6 @@ export class StringRules extends SequentialRuleSet<string> {
                     done();
                 }
             },
-            null,
-            true,
             options.stopOnFailure);
     }
 
@@ -57,7 +56,8 @@ export class StringRules extends SequentialRuleSet<string> {
             stopOnFailure: true
         });
 
-        return this.checkAndConvert(
+        return this.parseAndValidate(
+            null,
             (done, parsedValue) => {
                 if (!parsedValue || parsedValue.trim().length === 0) {
                     done(options.errorMessage);
@@ -66,8 +66,6 @@ export class StringRules extends SequentialRuleSet<string> {
                     done();
                 }
             },
-            null,
-            false,
             options.stopOnFailure);
     }
 
@@ -81,7 +79,8 @@ export class StringRules extends SequentialRuleSet<string> {
             stopOnFailure: false
         });
 
-        return this.checkAndConvert(
+        return this.parseAndValidate(
+            null,
             (done, value) => {
                 if (value && value.length > maxLength) {
                     done(options.errorMessage);
@@ -90,8 +89,6 @@ export class StringRules extends SequentialRuleSet<string> {
                     done();
                 }
             },
-            null,
-            false,
             options.stopOnFailure);
     }
 
@@ -106,7 +103,8 @@ export class StringRules extends SequentialRuleSet<string> {
             stopOnFailure: false
         });
 
-        return this.checkAndConvert(
+        return this.parseAndValidate(
+            null,
             (done, value) => {
                 if (value && value.length < minLength) {
                     done(options.errorMessage);
@@ -115,8 +113,6 @@ export class StringRules extends SequentialRuleSet<string> {
                     done();
                 }
             },
-            null,
-            false,
             options.stopOnFailure);
     }
 }
@@ -137,7 +133,8 @@ export class NumberRules extends SequentialRuleSet<number> {
             stopOnFailure: true
         });
 
-        return this.checkAndConvert(
+        return this.parseAndValidate(
+            null,
             (done, value) => {
                 if (value === null || value === undefined || <any>value === "") {
                     done();
@@ -151,8 +148,6 @@ export class NumberRules extends SequentialRuleSet<number> {
 
                 done();
             },
-            null,
-            true,
             options.stopOnFailure);
     }
 
@@ -167,15 +162,7 @@ export class NumberRules extends SequentialRuleSet<number> {
 
         const failResult = new Object();
 
-        return this.checkAndConvert(
-            (done, convertedValue, obj, root) => {
-                if (convertedValue == failResult) {
-                    done(options.errorMessage);
-                }
-                else {
-                    done();
-                }
-            },
+        return this.parseAndValidate(
             (inputValue, validatingObject, rootObject) => {
                 if (inputValue === null || inputValue === undefined || inputValue === "") {
                     return inputValue;
@@ -188,7 +175,14 @@ export class NumberRules extends SequentialRuleSet<number> {
 
                 return converted;
             },
-            false,
+            (done, convertedValue, obj, root) => {
+                if (convertedValue == failResult) {
+                    done(options.errorMessage);
+                }
+                else {
+                    done();
+                }
+            },
             options.stopOnFailure);
     }
 }

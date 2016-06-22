@@ -22,14 +22,14 @@ var StringRules = (function (_super) {
             errorMessage: "Value must be a string.",
             stopOnFailure: true
         });
-        return this.checkAndConvert(function (done, value) {
+        return this.parseAndValidate(null, function (done, value) {
             if (value && typeof value !== "string") {
                 done(options.errorMessage);
             }
             else {
                 done();
             }
-        }, null, true, options.stopOnFailure);
+        }, options.stopOnFailure);
     };
     /** Converts value to string. */
     StringRules.prototype.parseString = function (options) {
@@ -50,14 +50,14 @@ var StringRules = (function (_super) {
             errorMessage: "Value can not be empty.",
             stopOnFailure: true
         });
-        return this.checkAndConvert(function (done, parsedValue) {
+        return this.parseAndValidate(null, function (done, parsedValue) {
             if (!parsedValue || parsedValue.trim().length === 0) {
                 done(options.errorMessage);
             }
             else {
                 done();
             }
-        }, null, false, options.stopOnFailure);
+        }, options.stopOnFailure);
     };
     /** Checks string maximum length. */
     StringRules.prototype.maxLength = function (maxLength, options) {
@@ -68,14 +68,14 @@ var StringRules = (function (_super) {
             errorMessage: "Value is too long.",
             stopOnFailure: false
         });
-        return this.checkAndConvert(function (done, value) {
+        return this.parseAndValidate(null, function (done, value) {
             if (value && value.length > maxLength) {
                 done(options.errorMessage);
             }
             else {
                 done();
             }
-        }, null, false, options.stopOnFailure);
+        }, options.stopOnFailure);
     };
     /** Checks string minimum length. */
     StringRules.prototype.minLength = function (minLength, options) {
@@ -86,14 +86,14 @@ var StringRules = (function (_super) {
             errorMessage: "Value is too short.",
             stopOnFailure: false
         });
-        return this.checkAndConvert(function (done, value) {
+        return this.parseAndValidate(null, function (done, value) {
             if (value && value.length < minLength) {
                 done(options.errorMessage);
             }
             else {
                 done();
             }
-        }, null, false, options.stopOnFailure);
+        }, options.stopOnFailure);
     };
     return StringRules;
 }(rules_base_1.SequentialRuleSet));
@@ -115,7 +115,7 @@ var NumberRules = (function (_super) {
             errorMessage: "Value is not valid number.",
             stopOnFailure: true
         });
-        return this.checkAndConvert(function (done, value) {
+        return this.parseAndValidate(null, function (done, value) {
             if (value === null || value === undefined || value === "") {
                 done();
                 return;
@@ -125,7 +125,7 @@ var NumberRules = (function (_super) {
                 return;
             }
             done();
-        }, null, true, options.stopOnFailure);
+        }, options.stopOnFailure);
     };
     /**
      * Parses number.
@@ -136,14 +136,7 @@ var NumberRules = (function (_super) {
             stopOnFailure: false
         });
         var failResult = new Object();
-        return this.checkAndConvert(function (done, convertedValue, obj, root) {
-            if (convertedValue == failResult) {
-                done(options.errorMessage);
-            }
-            else {
-                done();
-            }
-        }, function (inputValue, validatingObject, rootObject) {
+        return this.parseAndValidate(function (inputValue, validatingObject, rootObject) {
             if (inputValue === null || inputValue === undefined || inputValue === "") {
                 return inputValue;
             }
@@ -152,7 +145,14 @@ var NumberRules = (function (_super) {
                 return failResult;
             }
             return converted;
-        }, false, options.stopOnFailure);
+        }, function (done, convertedValue, obj, root) {
+            if (convertedValue == failResult) {
+                done(options.errorMessage);
+            }
+            else {
+                done();
+            }
+        }, options.stopOnFailure);
     };
     return NumberRules;
 }(rules_base_1.SequentialRuleSet));

@@ -27,9 +27,9 @@ export function validate<T>(
 
     rule.runValidate(
         validationContext,
-        () => {
+        (success, convertedValue) => {
             if (errorAccumulator.valid()) {
-                doneCallback(null, parsedValue);
+                doneCallback(null, convertedValue);
             }
             else {
                 doneCallback(errorAccumulator.errors(), null);

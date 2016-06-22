@@ -50,13 +50,13 @@ class ObjectValidationRuleCore<T extends IObject> implements ValidationRule<T> {
 
     runValidate(
         context: IValidationContext,
-        doneCallback: (success: boolean) => void,
+        doneCallback: (success: boolean, convertedValue: any) => void,
         obj: any,
         validatingObject?: any,
         rootObject?: any): void {
 
         if (obj === null || obj === undefined) {
-            doneCallback(true);
+            doneCallback(true, null);
             return;
         }
 
@@ -88,7 +88,7 @@ class ObjectValidationRuleCore<T extends IObject> implements ValidationRule<T> {
                 );
             }
             else {
-                doneCallback(allValid);
+                doneCallback(allValid, obj);
             }
         };
 

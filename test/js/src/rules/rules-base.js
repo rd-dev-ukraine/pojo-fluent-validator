@@ -50,23 +50,27 @@ function combineRules() {
             if (!doneCallback) {
                 throw new Error("done callback is required.");
             }
-            var allRulesValid = true;
             var rulesToRun = rules.slice();
+            var allRulesValid = true;
+            var convertedValue = parsedValue;
             var runRule = function () {
                 var rule = rulesToRun.shift();
                 if (rule) {
-                    rule.runValidate(context, function (success) {
+                    rule.runValidate(context, function (success, ruleConvertedValue) {
                         if (!success && rule.stopOnFailure) {
-                            doneCallback(false);
+                            doneCallback(false, null);
                             return;
+                        }
+                        if (success) {
+                            convertedValue = ruleConvertedValue;
                         }
                         allRulesValid = allRulesValid && success;
                         // Runs next rule recursively
                         runRule();
-                    }, parsedValue, validatingObject, rootObject);
+                    }, convertedValue, validatingObject, rootObject);
                 }
                 else {
-                    doneCallback(allRulesValid);
+                    doneCallback(allRulesValid, convertedValue);
                 }
             };
             runRule();
@@ -102,8 +106,7 @@ var SequentialRuleSet = (function () {
      * Adds a rule which uses custom functions for validation and converting.
      * If parsing function is not provided value is passed to validation function without conversion.
      */
-    SequentialRuleSet.prototype.checkAndConvert = function (validationFn, parseFn, putRuleFirst, stopOnFailure) {
-        if (putRuleFirst === void 0) { putRuleFirst = false; }
+    SequentialRuleSet.prototype.parseAndValidate = function (parseFn, validationFn, stopOnFailure) {
         if (stopOnFailure === void 0) { stopOnFailure = false; }
         if (!validationFn) {
             throw new Error("Validation function is required.");
@@ -116,26 +119,26 @@ var SequentialRuleSet = (function () {
                 validationFn(function (errorMessage) {
                     if (errorMessage) {
                         context.reportError(errorMessage);
-                        done(false);
+                        done(false, null);
                     }
                     else {
-                        done(true);
+                        done(true, inputValue);
                     }
                 }, inputValue, validatingObject, rootObject);
             }
-        }, putRuleFirst);
+        });
     };
     /** Fails if input value is null or undefined. */
     SequentialRuleSet.prototype.required = function (options) {
         options = ensureRuleOptions(options, { errorMessage: "Value is required.", stopOnFailure: true });
-        return this.checkAndConvert(function (done, input) {
+        return this.parseAndValidate(null, function (done, input) {
             if (input === null || input === undefined) {
                 done(options.errorMessage);
             }
             else {
                 done();
             }
-        }, null, true, options.stopOnFailure);
+        }, options.stopOnFailure);
     };
     /**
      * Parses input value.
@@ -150,26 +153,28 @@ var SequentialRuleSet = (function () {
             errorMessage: "Conversion failed.",
             stopOnFailure: true
         });
-        var failResult = new Object();
-        return this.checkAndConvert(function (done, convertedValue, obj, root) {
-            if (convertedValue == failResult) {
-                done(options.errorMessage);
-            }
-            else {
-                done();
-            }
-        }, function (inputValue, validatingObject, rootObject) {
-            try {
-                var converted = convertFn(inputValue, validatingObject, rootObject);
-                if (converted === null || converted === undefined) {
-                    return failResult;
+        return this.withRule({
+            stopOnFailure: options.stopOnFailure,
+            runParse: function (inputValue, validatingObject, rootObject) {
+                return inputValue;
+            },
+            runValidate: function (context, doneCallback, parsedValue, validatingObject, rootObject) {
+                try {
+                    var converted = convertFn(parsedValue, validatingObject, rootObject);
+                    if (converted === null || converted === undefined) {
+                        context.reportError(options.errorMessage);
+                        doneCallback(false, null);
+                    }
+                    else {
+                        doneCallback(true, converted);
+                    }
                 }
-                return converted;
+                catch (e) {
+                    context.reportError(options.errorMessage);
+                    doneCallback(false, null);
+                }
             }
-            catch (e) {
-                return failResult;
-            }
-        }, false, options.stopOnFailure);
+        });
     };
     /**
      * Checks the value using custom function. Function must return true if value is valid and false otherwise.
@@ -182,28 +187,22 @@ var SequentialRuleSet = (function () {
             errorMessage: "Value is not valid.",
             stopOnFailure: false
         });
-        return this.checkAndConvert(function (done, input, obj, root) {
+        return this.parseAndValidate(null, function (done, input, obj, root) {
             if (!predicate(input, obj, root)) {
                 done(options.errorMessage);
             }
             else {
                 done();
             }
-        }, null, false, options.stopOnFailure);
+        }, options.stopOnFailure);
     };
-    SequentialRuleSet.prototype.withRule = function (rule, putRuleFirst) {
-        if (putRuleFirst === void 0) { putRuleFirst = false; }
+    SequentialRuleSet.prototype.withRule = function (rule) {
         if (!rule) {
             throw new Error("rule is required");
         }
         var copy = this.clone();
         copy.stopOnFailure = this.stopOnFailure;
-        if (putRuleFirst) {
-            copy.rules = [rule].concat(this.rules);
-        }
-        else {
-            copy.rules = this.rules.concat([rule]);
-        }
+        copy.rules = this.rules.concat([rule]);
         return copy;
     };
     return SequentialRuleSet;
