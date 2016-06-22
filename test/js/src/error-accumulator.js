@@ -10,7 +10,9 @@ var ErrorAccumulator = (function () {
             return;
         }
         var messages = this.errorHash[path] = (this.errorHash[path] || []);
-        messages.push(errorMessage);
+        if (!messages.some(function (v) { return v === errorMessage; })) {
+            messages.push(errorMessage);
+        }
     };
     ErrorAccumulator.prototype.errors = function () {
         return this.errorHash;

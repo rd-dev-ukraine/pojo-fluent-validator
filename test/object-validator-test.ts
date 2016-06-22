@@ -311,7 +311,7 @@ describe("for expandable object", () => {
 
 describe("for multiple validators", () => {
     const idValidator = rules.obj({
-        id: rules.num()
+        id: rules.num(true, { errorMessage: "Not a number"})
             .required()
     }).expandable();
 
@@ -320,7 +320,7 @@ describe("for multiple validators", () => {
     }).expandable();
 
     const idValidityValidator = rules.obj({
-        id: rules.num(false)
+        id: rules.num(false, { errorMessage: "Inv numb" })
             .required()
             .must(v => {
                 return isNaN(v) || v < 100
@@ -349,7 +349,7 @@ describe("for multiple validators", () => {
             .then(() => done("Must fail"))
             .catch(err => assertBlock(done, () => {
                 err.should.deepEqual({
-                    "id": ["Value is not a valid number.", "Value is not a valid number."]
+                    "id": ["Not a number", "Inv numb"]
                 })
             }));
     });

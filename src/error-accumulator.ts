@@ -12,7 +12,9 @@ export default class ErrorAccumulator {
         }
 
         const messages = this.errorHash[path] = (this.errorHash[path] || []);
-        messages.push(errorMessage);
+        if (!messages.some(v => v === errorMessage)) {
+            messages.push(errorMessage);
+        }
     }
 
     errors(): ValidationErrorHash {

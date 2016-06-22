@@ -275,14 +275,14 @@ describe("for expandable object", function () {
 });
 describe("for multiple validators", function () {
     var idValidator = src_1.rules.obj({
-        id: src_1.rules.num()
+        id: src_1.rules.num(true, { errorMessage: "Not a number" })
             .required()
     }).expandable();
     var titleValidator = src_1.rules.obj({
         title: src_1.rules.str().required().must(function (t) { return t.length < 20; })
     }).expandable();
     var idValidityValidator = src_1.rules.obj({
-        id: src_1.rules.num(false)
+        id: src_1.rules.num(false, { errorMessage: "Inv numb" })
             .required()
             .must(function (v) {
             return isNaN(v) || v < 100;
@@ -307,7 +307,7 @@ describe("for multiple validators", function () {
             .then(function () { return done("Must fail"); })
             .catch(function (err) { return utils_1.assertBlock(done, function () {
             err.should.deepEqual({
-                "id": ["Value is not a valid number.", "Value is not a valid number."]
+                "id": ["Not a number", "Inv numb"]
             });
         }); });
     });
