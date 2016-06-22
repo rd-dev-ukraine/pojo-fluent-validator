@@ -9,7 +9,7 @@ export { rules };
 
 export function validate<T>(
     value: any,
-    doneCallback: (convertedValue: T, errors: ValidationErrorHash) => void,
+    doneCallback: (errors: ValidationErrorHash, convertedValue: T) => void,
     ...validators: ValidationRule<T>[]): void {
     if (!doneCallback) {
         throw new Error("Done callback is required.");
@@ -29,10 +29,10 @@ export function validate<T>(
         validationContext,
         () => {
             if (errorAccumulator.valid()) {
-                doneCallback(parsedValue, null);
+                doneCallback(null, parsedValue);
             }
             else {
-                doneCallback(null, errorAccumulator.errors());
+                doneCallback(errorAccumulator.errors(), null);
             }
         },
         parsedValue,

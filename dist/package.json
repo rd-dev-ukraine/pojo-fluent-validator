@@ -1,9 +1,9 @@
 {
   "name": "pojo-fluent-validator",
-  "version": "1.0.5",
+  "version": "1.1.2",
   "description": "Validation and conversion tool for plain old javascript objects.",
-  "main": "./js/index.js",
-  "typings": "./index",
+  "main": "index.js",
+  "typings": "index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rd-dev-ukraine/pojo-fluent-validator.git"
@@ -16,8 +16,5 @@
   ],
   "author": "Sergey Tokarev",
   "license": "MIT",
-  "private": false,
-  "devDependencies": {
-    "typescript": "^1.8.10"
-  }
+  "private": false
 }

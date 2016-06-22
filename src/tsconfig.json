@@ -7,7 +7,7 @@
         "noFallthroughCasesInSwitch": true,
         "noImplicitReturns": true,
         "sourceMap": false,
-        "outDir": "./js"
+        "outDir": "../dist"
     },
     "files": [
         "./index.ts"

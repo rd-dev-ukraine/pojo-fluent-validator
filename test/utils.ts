@@ -20,7 +20,7 @@ export function validateWithPromise<T>(value: any, ...validators: ValidationRule
     return new Promise((resolve, reject) => {
         validate(
             value,
-            (result, errors) => {
+            (errors, result) => {
                 if (errors) {
                     reject(errors);
                 }

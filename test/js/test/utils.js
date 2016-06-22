@@ -20,7 +20,7 @@ function validateWithPromise(value) {
         throw new Error("At least one validator is required");
     }
     return new Promise(function (resolve, reject) {
-        src_1.validate.apply(void 0, [value, function (result, errors) {
+        src_1.validate.apply(void 0, [value, function (errors, result) {
             if (errors) {
                 reject(errors);
             }

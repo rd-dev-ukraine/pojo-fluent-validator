@@ -20,10 +20,10 @@ function validate(value, doneCallback) {
     var parsedValue = rule.runParse(value, value, value);
     rule.runValidate(validationContext, function () {
         if (errorAccumulator.valid()) {
-            doneCallback(parsedValue, null);
+            doneCallback(null, parsedValue);
         }
         else {
-            doneCallback(null, errorAccumulator.errors());
+            doneCallback(errorAccumulator.errors(), null);
         }
     }, parsedValue, parsedValue, parsedValue);
 }
