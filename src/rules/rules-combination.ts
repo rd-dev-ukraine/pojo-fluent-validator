@@ -2,7 +2,7 @@ import { ValidationRule, RuleOptions, IValidationContext } from "../definitions"
 import { ensureRuleOptions } from "./rules-base";
 
 /**
- * Combines a set of rules into a one rule.
+ * Combines a set of rules into a new rule.
  * The new rule passes if one of specified rule passed.
  * 
  * If no of specified rule passed then new rule failed with all errors produced by failed rules.
@@ -45,14 +45,11 @@ export function one<T>(rules: ValidationRule<T>[], stopOnError: boolean = false)
                         ruleContext,
                         (success, convertedValue) => {
                             if (success) {
-                                console.log("rule success")
                                 doneCallback(true, convertedValue);
                                 return;
                             }
                             else {
-                                console.log("rule failed, stop on error = ", rule.stopOnFailure);
                                 if (rule.stopOnFailure) {
-                                    console.log("stop on failure");
                                     ruleContext = voidContext;
                                 }
 
@@ -64,7 +61,6 @@ export function one<T>(rules: ValidationRule<T>[], stopOnError: boolean = false)
                         rootObject);
                 }
                 else {
-                    console.log("validation failed");
                     bufferContext.flushErrors();
                     doneCallback(false, null);
                 }
@@ -72,5 +68,85 @@ export function one<T>(rules: ValidationRule<T>[], stopOnError: boolean = false)
 
             run();
         }
+    };
+}
+
+/**
+ * Combines a set of rules into a new rule.
+ * New rule passed if all rules are passed. Value is converted by each rule using previous value as input.
+ *
+ * If some of rules failed validation will continue until failed rule has stopOnError==true. 
+ * The errors from failed rules will be merged. 
+ */
+export function all<T>(rules: ValidationRule<T>[], stopOnError: boolean = false): ValidationRule<T> {
+    if (!rules || !rules.length) {
+        throw new Error("Rule set is required.");
     }
+
+    return {
+        stopOnFailure: !!stopOnError,
+
+        runParse(inputValue: any): T {
+            return <T><any>inputValue;
+        },
+
+        runValidate(
+            context: IValidationContext,
+            doneCallback: (success: boolean, convertedValue: any) => void,
+            parsedValue: any,
+            validatingObject?: any,
+            rootObject?: any): void {
+
+            const rulesToRun = [...rules];
+
+            let value = parsedValue;
+            let allRulesOk = true;
+
+            console.log("all run validate")
+
+            const run = () => {
+                const rule = rulesToRun.shift();
+
+                if (rule) { 
+
+                    console.log("run rule");
+
+                    const ruleParsedValue = rule.runParse(value, validatingObject, rootObject);
+
+                    rule.runValidate(
+                        context,
+                        (success, convertedValue) => {
+                            console.log("run rule result " + success);
+                            if (success) {
+                                value = convertedValue;
+                            }
+                            else {
+                                console.log("rule failed, stop on error = ", rule.stopOnFailure);
+                                if (rule.stopOnFailure) {
+                                    doneCallback(false, null);
+                                    return;
+                                }
+                            }
+
+                            allRulesOk = allRulesOk && success;
+
+                            run();
+                        },
+                        ruleParsedValue,
+                        validatingObject,
+                        rootObject);
+                }
+                else {
+                    if (allRulesOk) {
+                        doneCallback(true, value);
+                    }
+                    else {
+                        doneCallback(false, null);
+                    }
+                }
+            };
+
+            run();
+        }
+    };
 }

@@ -303,11 +303,21 @@ export declare namespace rules {
     export function arr<TElement>(elementValidationRule: ValidationRule<TElement>, stopOnFailure?: boolean): ArrayValidationRule<TElement>;
 
     /**
-     * Combines a set of rules into a one rule.
+     * Combines a set of rules into a new rule.
      * The new rule passes if one of specified rule passed.
+     * 
      * If no of specified rule passed then new rule failed with all errors produced by failed rules.
      * If rule in the set has stopOnFailure === true then error accumulating stops if such rule failed.
      * 
      */
-    export function one<T>(rules: ValidationRule<T>[], stopOnError?: boolean): ValidationRule<T>
+    export function one<T>(rules: ValidationRule<T>[], stopOnError?: boolean): ValidationRule<T>;
+
+    /**
+     * Combines a set of rules into a new rule.
+     * New rule passed if all rules are passed. Value is converted by each rule using previous value as input.
+     *
+     * If some of rules failed validation will continue until failed rule has stopOnError==true. 
+     * The errors from failed rules will be merged. 
+     */
+    export function all<T>(rules: ValidationRule<T>[], stopOnError?: boolean): ValidationRule<T>;
 }
