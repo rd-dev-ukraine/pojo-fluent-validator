@@ -39,6 +39,26 @@ describe(".one combinator", function () {
             var _a;
         });
     });
+    it("must correct accumulate errors if several rules failed", function (done) {
+        var rule = src_1.rules.one([
+            src_1.rules.obj({
+                id: src_1.rules.num().must(function (id) { return id > 0; }, { errorMessage: "> 0" })
+            }).expandable(),
+            src_1.rules.obj({
+                id: src_1.rules.num().must(function (id) { return id % 2 === 0; }, { errorMessage: "% 2 === 0" })
+            }).expandable(),
+            src_1.rules.obj({
+                title: src_1.rules.str().notEmpty({ errorMessage: "Title required" })
+            }).expandable()
+        ]);
+        var r = utils_2.validateWithPromise({ id: -1 }, rule);
+        utils_1.shouldFail(r, done, function (err) {
+            err.should.deepEqual({
+                id: ["> 0", "% 2 === 0"],
+                title: ["Title required"]
+            });
+        });
+    });
 });
 // describe(".all combinator", () => {
 //     const rule = rules.one([

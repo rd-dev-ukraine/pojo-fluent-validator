@@ -36,7 +36,7 @@ describe(".one combinator", () => {
             rules.num().must(v => v < 100, { errorMessage: "< 100" }).stopOnError(true),
             rules.num().must(v => v % 2 === 0, { errorMessage: "%2 === 0" }),
         ]);
-        
+
         const result = validate(201, rule);
 
         shouldFail(result, done, err => {
@@ -44,6 +44,30 @@ describe(".one combinator", () => {
                 [""]: ["== 300", "< 100"]
             });
         });
+    });
+
+    it("must correct accumulate errors if several rules failed", done => {
+        const rule = rules.one([
+            rules.obj({
+                id: rules.num().must(id => id > 0, { errorMessage: "> 0" })
+            }).expandable(),
+            rules.obj({
+                id: rules.num().must(id => id % 2 === 0, { errorMessage: "% 2 === 0" })
+            }).expandable(),
+            rules.obj({
+                title: rules.str().notEmpty({ errorMessage: "Title required" })
+            }).expandable()
+        ]);
+
+        const r = validate({ id: -1 }, rule);
+
+        shouldFail(r, done, err => {
+            err.should.deepEqual({
+                id: ["> 0", "% 2 === 0"],
+                title: ["Title required"]
+            });
+        });
+
     });
 });
 
