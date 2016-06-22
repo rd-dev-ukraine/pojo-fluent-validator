@@ -87,6 +87,22 @@ export default () => {
                     err.price.should.deepEqual(["Positive!!!"]);
                 }));
         });
+
+        it("should fail on few property errors", done => {
+            const rule = rules.obj({
+                id: rules.num().must(v => v > 100, { errorMessage: "Too small" }),
+                price: rules.num().must(p => p > 0, { errorMessage: "Price must be positive" })
+            });
+
+            validate({ id: 1, price: -15 }, rule)
+                .then(v => done("Must fail but success with value " + JSON.stringify(v)))
+                .catch(err => assertBlock(done, () => {
+                    err.should.deepEqual({
+                        id: ["Too small"],
+                        price: ["Price must be positive"]
+                    });
+                }));
+        });
     });
 
     describe("for any object", () => {

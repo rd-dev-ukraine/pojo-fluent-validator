@@ -77,6 +77,20 @@ exports.default = function () {
                 err.price.should.deepEqual(["Positive!!!"]);
             }); });
         });
+        it("should fail on few property errors", function (done) {
+            var rule = src_1.rules.obj({
+                id: src_1.rules.num().must(function (v) { return v > 100; }, { errorMessage: "Too small" }),
+                price: src_1.rules.num().must(function (p) { return p > 0; }, { errorMessage: "Price must be positive" })
+            });
+            utils_2.validateWithPromise({ id: 1, price: -15 }, rule)
+                .then(function (v) { return done("Must fail but success with value " + JSON.stringify(v)); })
+                .catch(function (err) { return utils_1.assertBlock(done, function () {
+                err.should.deepEqual({
+                    id: ["Too small"],
+                    price: ["Price must be positive"]
+                });
+            }); });
+        });
     });
     describe("for any object", function () {
         it("should support .after() validation rule", function (done) {
