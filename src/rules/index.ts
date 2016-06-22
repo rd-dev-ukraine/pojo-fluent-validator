@@ -3,3 +3,4 @@ export * from "./object-rules";
 export * from "./hash-rules";
 export * from "./array-rules";
 export * from "./rules-base";
+export * from "./rules-combination";

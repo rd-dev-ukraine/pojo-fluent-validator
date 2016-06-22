@@ -31,3 +31,32 @@ export function validateWithPromise<T>(value: any, ...validators: ValidationRule
             ...validators);
     });
 }
+
+export function shouldFail<T>(result: Promise<T>, done: MochaDone, assertError: (err: any) => void): void {
+    result
+        .then(v => done(new Error("Must fail but passed with result " + JSON.stringify(v))))
+        .catch(err => {
+            try {
+                assertError(err);
+                done();
+            }
+            catch (e) {
+                done(e);
+            }
+        });
+}
+
+export function shouldPass<T>(result: Promise<T>, done: MochaDone, assertResult: (result: any) => void): void {
+    result
+        .then(result => {
+            try {
+                assertResult(result);
+                done();
+            }
+            catch (e) {
+                done(e);
+            }
+        })
+        .catch(err => done(new Error("Must pass but failed with error " + JSON.stringify(err))));
+}
+

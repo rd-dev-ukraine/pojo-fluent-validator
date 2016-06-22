@@ -7,3 +7,4 @@ __export(require("./object-rules"));
 __export(require("./hash-rules"));
 __export(require("./array-rules"));
 __export(require("./rules-base"));
+__export(require("./rules-combination"));

@@ -7,7 +7,8 @@
     "url": "git+https://github.com/rd-dev-ukraine/pojo-fluent-validator.git"
   },
   "scripts": {
-    "test": "mocha ./js/test"
+    "test": "mocha ./js/test",
+    "rebuild": "tsc -p ../src && tsc && mocha js/test"
   },
   "keywords": [
     "validation",

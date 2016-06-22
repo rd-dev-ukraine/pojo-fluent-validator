@@ -113,7 +113,7 @@ export declare namespace rules {
          */
         parseAndValidate(
             parseFn: (inputValue: any, validatingObject?: any, rootObject?: any) => T,
-            validationFn: (doneCallback: (errorMessage?: string) => void, parsedValue: T, validatingObject?: any, rootObject?: any) => void,            
+            validationFn: (doneCallback: (errorMessage?: string) => void, parsedValue: T, validatingObject?: any, rootObject?: any) => void,
             stopOnFailure?: boolean): this;
 
         /** Fails if input value is null or undefined. */
@@ -148,10 +148,10 @@ export declare namespace rules {
 
         stopOnFailure: boolean;
         runParse(inputValue: any, validatingObject?: any, rootObject?: any): T;
-        runValidate(context: IValidationContext, 
-            doneCallback: (success: boolean, convertedValue: any) => void, 
-            parsedValue: any, 
-            validatingObject?: any, 
+        runValidate(context: IValidationContext,
+            doneCallback: (success: boolean, convertedValue: any) => void,
+            parsedValue: any,
+            validatingObject?: any,
             rootObject?: any): void;
 
         /** Configures whether rules after the current rule should run if current rule failed. */
@@ -289,4 +289,11 @@ export declare namespace rules {
 
     /** Validates an array of the elements with the same structure. */
     export function arr<TElement>(elementValidationRule: ValidationRule<TElement>, stopOnFailure?: boolean): ArrayValidationRule<TElement>;
+
+    /**
+     * Combines a set of rules into a one rule.
+     * The new rule passes if one of specified rule passed.
+     * If any of specified rule passed then new rule failed with given error message.
+     */
+    export function one<T>(rules: ValidationRule<T>[], options?: RuleOptions): ValidationRule<T>;
 }

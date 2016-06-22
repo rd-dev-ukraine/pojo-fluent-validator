@@ -32,3 +32,31 @@ function validateWithPromise(value) {
     });
 }
 exports.validateWithPromise = validateWithPromise;
+function shouldFail(result, done, assertError) {
+    result
+        .then(function (v) { return done(new Error("Must fail but passed with result " + JSON.stringify(v))); })
+        .catch(function (err) {
+        try {
+            assertError(err);
+            done();
+        }
+        catch (e) {
+            done(e);
+        }
+    });
+}
+exports.shouldFail = shouldFail;
+function shouldPass(result, done, assertResult) {
+    result
+        .then(function (result) {
+        try {
+            assertResult(result);
+            done();
+        }
+        catch (e) {
+            done(e);
+        }
+    })
+        .catch(function (err) { return done(new Error("Must pass but failed with error " + JSON.stringify(err))); });
+}
+exports.shouldPass = shouldPass;
