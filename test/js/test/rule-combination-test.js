@@ -4,24 +4,82 @@ var src_1 = require("../src");
 var utils_2 = require("./utils");
 describe(".one combinator", function () {
     var rule = src_1.rules.one([
-        src_1.rules.num().must(function (v) { return v > 10; }, { errorMessage: "> 10" }),
+        src_1.rules.num().must(function (v) { return v === 300; }, { errorMessage: "== 300" }),
         src_1.rules.num().must(function (v) { return v < 100; }, { errorMessage: "< 100" }),
-        src_1.rules.num().must(function (v) { return v % 2 === 0; }, { errorMessage: "%2 === 0" }),
-    ], { errorMessage: "Failed!" });
-    it("must pass if all rules passed", function (done) {
-        var result = utils_2.validateWithPromise(20, rule);
+        src_1.rules.num().must(function (v) { return v % 2 === 0; }, { errorMessage: "% 2 === 0" }),
+    ]);
+    it("must pass if one rules passed", function (done) {
+        var result = utils_2.validateWithPromise(2, rule);
         utils_1.shouldPass(result, done, function (v) {
-            v.should.equal(20);
+            v.should.equal(2);
         });
     });
-    it("must fail if one rule failed", function (done) {
-        var result = utils_2.validateWithPromise(200, rule);
+    it("must fail if all rules failed", function (done) {
+        var result = utils_2.validateWithPromise(201, rule);
         utils_1.shouldFail(result, done, function (err) {
             err.should.deepEqual((_a = {},
-                _a[""] = ["< 100"],
+                _a[""] = ["== 300", "< 100", "% 2 === 0"],
+                _a
+            ));
+            var _a;
+        });
+    });
+    it("must stop validating if all rules failed and stops on error is true", function (done) {
+        var rule = src_1.rules.one([
+            src_1.rules.num().must(function (v) { return v === 300; }, { errorMessage: "== 300" }),
+            src_1.rules.num().must(function (v) { return v < 100; }, { errorMessage: "< 100" }).stopOnError(true),
+            src_1.rules.num().must(function (v) { return v % 2 === 0; }, { errorMessage: "%2 === 0" }),
+        ]);
+        var result = utils_2.validateWithPromise(201, rule);
+        utils_1.shouldFail(result, done, function (err) {
+            err.should.deepEqual((_a = {},
+                _a[""] = ["== 300", "< 100"],
                 _a
             ));
             var _a;
         });
     });
 });
+// describe(".all combinator", () => {
+//     const rule = rules.one([
+//         rules.num().must(v => v > 10, { errorMessage: "> 10" }),
+//         rules.num().must(v => v < 100, { errorMessage: "< 100" }),
+//         rules.num().must(v => v % 2 === 0, { errorMessage: "%2 === 0" }),
+//     ]);
+//     it("must pass if all rules passed", done => {
+//         const result = validate(20, rule);
+//         shouldPass(result, done,
+//             v => {
+//                 v.should.equal(20);
+//             });
+//     });
+//     it("must fail if one rule failed", done => {
+//         const result = validate(200, rule);
+//         shouldFail(result, done, err => {
+//             err.should.deepEqual({
+//                 [""]: ["< 100"]
+//             });
+//         });
+//     });
+//     it("must continue validating if one rule failed and stops on error is false", done => {
+//         const result = validate(201, rule);
+//         shouldFail(result, done, err => {
+//             err.should.deepEqual({
+//                 [""]: ["< 100", "%2 === 0"]
+//             });
+//         });
+//     });
+//     it("must stop validating if one rule failed and stops on error is true", done => {
+//         const rule = rules.one([
+//             rules.num().must(v => v > 10, { errorMessage: "> 10" }).stopOnError(true),
+//             rules.num().must(v => v < 100, { errorMessage: "< 100" }).stopOnError(true),
+//             rules.num().must(v => v % 2 === 0, { errorMessage: "%2 === 0" }).stopOnError(true),
+//         ]);
+//         const result = validate(201, rule);
+//         shouldFail(result, done, err => {
+//             err.should.deepEqual({
+//                 [""]: ["< 100"]
+//             });
+//         });
+//     });
+// }); 

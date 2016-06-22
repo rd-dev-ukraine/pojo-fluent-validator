@@ -14,7 +14,7 @@ export interface ValidationErrorHash {
 
 export interface RuleOptions {
     errorMessage?: string;
-    stopOnFailure?: boolean; 
+    stopOnFailure?: boolean;
 }
 
 /**
@@ -22,15 +22,23 @@ export interface RuleOptions {
  * creation nested context of different type.
  */
 export interface IValidationContext {
+    /** Creates new independent validation context instance. */
+    create (): IValidationContext;
+
     /** Writes an error message to error accumulator for this context. */
     reportError(errorMessage: string): void;
+
     /** Creates nested validation context represents property of the object. */
     property(propertyName: string, errorCallback?: (errorMessage: string) => boolean): IValidationContext;
+
     /** Creates nested validation context represents array element access by index. */
     index(index: number, errorCallback?: (errorMessage: string) => boolean): IValidationContext;
 
     /** Creates a copy of current validation context which don't put errors into inner error accumulator until flush method called. */
     bufferErrors(): IValidationContext;
+
+    /** Clears the error buffer. */
+    discardErrorBuffer(): void;
 
     /** Flushed buffered errors to inner error accumulator. */
     flushErrors(): void;

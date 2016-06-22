@@ -22,6 +22,9 @@ export declare interface RuleOptions {
  * creation nested context of different type.
  */
 export declare interface IValidationContext {
+    /** Creates new independent validation context instance. */
+    create(): IValidationContext;
+
     /** Writes an error message to error accumulator for this context. */
     reportError(errorMessage: string): void;
     /** Creates nested validation context represents property of the object. */
@@ -31,6 +34,9 @@ export declare interface IValidationContext {
 
     /** Creates a copy of current validation context which don't put errors into inner error accumulator until flush method called. */
     bufferErrors(): IValidationContext;
+
+    /** Clears the error buffer. */
+    discardErrorBuffer(): void;
 
     /** Flushed buffered errors to inner error accumulator. */
     flushErrors(): void;
@@ -130,6 +136,12 @@ export declare namespace rules {
          * Checks the value using custom function. Function must return true if value is valid and false otherwise.
          */
         must(predicate: (value: T, validatingObject?: any, rootObject?: any) => boolean, options?: RuleOptions): this;
+
+        /**
+         * Stops executing next rules if this rule failed.
+         * This flag affects final rule itself, not inner rules configures with fluent methods. 
+         */
+        stopOnError(stopValidationOnError?: boolean): this;
     }
 
     /** 
@@ -293,7 +305,9 @@ export declare namespace rules {
     /**
      * Combines a set of rules into a one rule.
      * The new rule passes if one of specified rule passed.
-     * If any of specified rule passed then new rule failed with given error message.
+     * If no of specified rule passed then new rule failed with all errors produced by failed rules.
+     * If rule in the set has stopOnFailure === true then error accumulating stops if such rule failed.
+     * 
      */
-    export function one<T>(rules: ValidationRule<T>[], options?: RuleOptions): ValidationRule<T>;
+    export function one<T>(rules: ValidationRule<T>[], stopOnError?: boolean): ValidationRule<T>
 }

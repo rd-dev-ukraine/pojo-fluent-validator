@@ -8,6 +8,9 @@ var ValidationContext = (function () {
         this.errorCallback = errorCallback;
         this.errorBuffer = null;
     }
+    ValidationContext.prototype.create = function () {
+        return new ValidationContext("", new error_accumulator_1.default());
+    };
     ValidationContext.prototype.reportError = function (message) {
         if (this.errorCallback && !this.errorCallback(message)) {
             return;
@@ -34,6 +37,11 @@ var ValidationContext = (function () {
     ValidationContext.prototype.bufferErrors = function () {
         var result = new ValidationContext(this.path, this.errorAccumulator, this.errorCallback);
         result.errorBuffer = new error_accumulator_1.default();
+        return result;
+    };
+    ValidationContext.prototype.discardErrorBuffer = function () {
+        var result = new ValidationContext(this.path, this.errorAccumulator, this.errorCallback);
+        result.errorBuffer = null;
         return result;
     };
     ValidationContext.prototype.flushErrors = function () {

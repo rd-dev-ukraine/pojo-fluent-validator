@@ -103,6 +103,17 @@ var SequentialRuleSet = (function () {
         combineRules.apply(void 0, this.rules).runValidate(context, doneCallback, parsedValue, validatingObject, rootObject);
     };
     /**
+     * Stops executing next rules if this rule failed.
+     * This flag affects final rule itself, not inner rules configures with fluent methods.
+     */
+    SequentialRuleSet.prototype.stopOnError = function (stopValidationOnError) {
+        if (stopValidationOnError === void 0) { stopValidationOnError = true; }
+        var copy = this.clone();
+        copy.stopOnFailure = !!stopValidationOnError;
+        copy.rules = this.rules;
+        return copy;
+    };
+    /**
      * Adds a rule which uses custom functions for validation and converting.
      * If parsing function is not provided value is passed to validation function without conversion.
      */

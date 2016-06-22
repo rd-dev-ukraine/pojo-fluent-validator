@@ -5,12 +5,12 @@ var ErrorAccumulator = (function () {
         this.isValid = true;
     }
     ErrorAccumulator.prototype.report = function (path, errorMessage) {
+        this.isValid = false;
         if (!errorMessage) {
             return;
         }
         var messages = this.errorHash[path] = (this.errorHash[path] || []);
         messages.push(errorMessage);
-        this.isValid = false;
     };
     ErrorAccumulator.prototype.errors = function () {
         return this.errorHash;

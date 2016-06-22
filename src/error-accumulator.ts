@@ -5,14 +5,14 @@ export default class ErrorAccumulator {
     private isValid = true;
 
     report(path: string, errorMessage: string): void {
+        this.isValid = false;
+
         if (!errorMessage) {
             return;
         }
 
         const messages = this.errorHash[path] = (this.errorHash[path] || []);
         messages.push(errorMessage);
-        
-        this.isValid = false;
     }
 
     errors(): ValidationErrorHash {

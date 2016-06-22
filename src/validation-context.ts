@@ -11,6 +11,10 @@ export default class ValidationContext implements IValidationContext {
         private errorCallback: (errorMessage: string) => boolean = null) {
     }
 
+    create(): IValidationContext {
+        return new ValidationContext("", new ErrorAccumulator());
+    }
+
     reportError(message: string): void {
         if (this.errorCallback && !this.errorCallback(message)) {
             return;
@@ -49,6 +53,13 @@ export default class ValidationContext implements IValidationContext {
     bufferErrors() {
         const result = new ValidationContext(this.path, this.errorAccumulator, this.errorCallback);
         result.errorBuffer = new ErrorAccumulator();
+
+        return result;
+    }
+
+    discardErrorBuffer() {
+        const result = new ValidationContext(this.path, this.errorAccumulator, this.errorCallback);
+        result.errorBuffer = null;
 
         return result;
     }

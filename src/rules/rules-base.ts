@@ -131,6 +131,19 @@ export abstract class SequentialRuleSet<T> implements ValidationRule<T> {
         );
     }
 
+    /**
+     * Stops executing next rules if this rule failed.
+     * This flag affects final rule itself, not inner rules configures with fluent methods. 
+     */
+    stopOnError(stopValidationOnError: boolean = true): this {        
+        const copy = this.clone();
+
+        copy.stopOnFailure = !!stopValidationOnError;
+        copy.rules = this.rules;
+
+        return <this>copy;
+    }
+
     /** 
      * Adds a rule which uses custom functions for validation and converting. 
      * If parsing function is not provided value is passed to validation function without conversion. 
